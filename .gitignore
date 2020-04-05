@@ -3,7 +3,7 @@
 __pycache__/
 *.py[cod]
 *$py.class
-models/
+deoldify/models/
 # C extensions
 *.so
 
