@@ -15,6 +15,9 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     @IBOutlet weak var promoImage: UIImageView!
     @IBOutlet weak var startButton: UIButton!
     let picker = UIImagePickerController()
+    let model = try! VNCoreMLModel(for: Colorizer512().model)
+    var originalImage: UIImage? = nil
+    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -34,18 +37,26 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     }
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-        picker.dismiss(animated: true, completion: nil)
-        guard let image = info[.originalImage] as? UIImage else {
-            fatalError("Expected a dictionary containing an image, but was provided the following: \(info)")
+        picker.dismiss(animated: true) {
+            guard let image = info[.originalImage] as? UIImage else {
+                fatalError("Expected a dictionary containing an image, but was provided the following: \(info)")
+            }
+            self.originalImage = image
+            self.process(image)
         }
-        let grayscaleImage = convertImageToGrayScale(image: image)
-        let model = try! VNCoreMLModel(for: colorizer().model)
+    }
+    
+    func process(_ image: UIImage) {
+        activityIndicator.startAnimating()
+        startButton.setTitle("", for: .normal)
+        startButton.isEnabled = false
         let request = VNCoreMLRequest(model: model) { (request, error) in
             self.processResult(for: request, error: error)
         }
+        request.imageCropAndScaleOption = .scaleFit
         
         DispatchQueue.global(qos: .userInitiated).async {
-            let handler = VNImageRequestHandler(cgImage: grayscaleImage.cgImage!)
+            let handler = VNImageRequestHandler(cgImage: image.cgImage!)
             do {
                 try handler.perform([request])
             } catch {
@@ -61,41 +72,57 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     
     func processResult(for request: VNRequest, error: Error?) {
         DispatchQueue.main.async {
-            guard let results = request.results else {
-                print("error")
+            
+            guard let results = request.results as? [VNPixelBufferObservation] else {
+                print("error", error ?? "")
                 return
             }
+            print(results[0].pixelBuffer)
+            let ciImage = CIImage(cvPixelBuffer: results[0].pixelBuffer)
+            let cgImage = self.convertCIImageToCGImage(inputImage: ciImage)!
+            var uiImage = UIImage(cgImage: cgImage)
             // The `results` will always be `VNClassificationObservation`s, as specified by the Core ML model in this project.
-            let res = results as! [VNCoreMLFeatureValueObservation]
             
-            let arr = res[0].featureValue.multiArrayValue!
-            print(arr)
-            self.promoImage.image = arr.image(min:-1, max:1)
+            //let arr = results[0].featureValue.multiArrayValue!
+            let scale = uiImage.size.height / max(self.originalImage!.size.height,self.originalImage!.size.width)
+            uiImage = self.cropToBounds(image: uiImage, width: self.originalImage!.size.width * scale, height: self.originalImage!.size.height * scale)
+            let storyBoard = UIStoryboard(name: "Main", bundle: nil)
+            let newViewController = storyBoard.instantiateViewController(withIdentifier: "SaveViewController") as! SaveViewController
+            newViewController.image = uiImage
+            
+            self.show(newViewController, sender: self)
+            
+            self.activityIndicator.stopAnimating()
+            self.startButton.setTitle("Let's start", for: .normal)
+            self.startButton.isEnabled = true
         }
     }
+    
+    func convertCIImageToCGImage(inputImage: CIImage) -> CGImage? {
+        let context = CIContext(options: nil)
+        if let cgImage = context.createCGImage(inputImage, from: inputImage.extent) {
+            return cgImage
+        }
+        return nil
+    }
+    
+    func cropToBounds(image: UIImage, width: CGFloat, height: CGFloat) -> UIImage {
+        
+        let cgimage = image.cgImage!
+        let contextImage: UIImage = UIImage(cgImage: cgimage)
+        let contextSize: CGSize = contextImage.size
+        let posX = (contextSize.width - width) / 2
+        let posY = (contextSize.height - height) / 2
+        
+        let rect: CGRect = CGRect(x: posX, y: posY, width: width, height: height)
+        
+        // Create bitmap image from context using the rect
+        let imageRef: CGImage = cgimage.cropping(to: rect)!
+        
+        // Create a new image based on the imageRef and rotate back to the original orientation
+        let image: UIImage = UIImage(cgImage: imageRef, scale: image.scale, orientation: image.imageOrientation)
+        
+        return image
+    }
+    
 }
-
-
-func convertImageToGrayScale(image: UIImage) -> UIImage {
-    // Create image rectangle with current image width/height
-    let imageRect: CGRect = CGRect(x: 0, y: 0, width: image.size.width, height: image.size.height)
-    
-    // Grayscale color space
-    let colorSpace: CGColorSpace = CGColorSpaceCreateDeviceGray()
-    // Create bitmap content with current image size and grayscale colorspace
-    let bitmapInfo = CGBitmapInfo(rawValue: CGImageAlphaInfo.none.rawValue)
-    let context = CGContext(data: nil, width: Int(UInt(image.size.width)), height: Int(UInt(image.size.height)), bitsPerComponent: 8, bytesPerRow: 0, space: colorSpace, bitmapInfo: bitmapInfo.rawValue)
-    
-    // Draw image into current context, with specified rectangle using previously defined context (with grayscale colorspace)
-    context?.draw(image.cgImage!, in: imageRect)
-    
-    // Create bitmap image info from pixel data in current context
-    let imageRef: CGImage = context!.makeImage()!
-    
-    // Create a new UIImage object
-    let newImage: UIImage = UIImage(cgImage: imageRef)
-    
-    // Return the new grayscale image
-    return newImage
-}
-
