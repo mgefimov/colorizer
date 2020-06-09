@@ -15,7 +15,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     @IBOutlet weak var promoImage: UIImageView!
     @IBOutlet weak var startButton: UIButton!
     let picker = UIImagePickerController()
-    let model = try! VNCoreMLModel(for: Colorizer512().model)
+    let model = try! VNCoreMLModel(for: Colorizer2().model)
     var originalImage: UIImage? = nil
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     
@@ -60,11 +60,6 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
             do {
                 try handler.perform([request])
             } catch {
-                /*
-                 This handler catches general image processing errors. The `classificationRequest`'s
-                 completion handler `processClassifications(_:error:)` catches errors specific
-                 to processing that request.
-                 */
                 print("Failed to perform classification.\n\(error.localizedDescription)")
             }
         }
@@ -81,9 +76,6 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
             let ciImage = CIImage(cvPixelBuffer: results[0].pixelBuffer)
             let cgImage = self.convertCIImageToCGImage(inputImage: ciImage)!
             var uiImage = UIImage(cgImage: cgImage)
-            // The `results` will always be `VNClassificationObservation`s, as specified by the Core ML model in this project.
-            
-            //let arr = results[0].featureValue.multiArrayValue!
             let scale = uiImage.size.height / max(self.originalImage!.size.height,self.originalImage!.size.width)
             uiImage = self.cropToBounds(image: uiImage, width: self.originalImage!.size.width * scale, height: self.originalImage!.size.height * scale)
             let storyBoard = UIStoryboard(name: "Main", bundle: nil)
@@ -116,13 +108,10 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         
         let rect: CGRect = CGRect(x: posX, y: posY, width: width, height: height)
         
-        // Create bitmap image from context using the rect
         let imageRef: CGImage = cgimage.cropping(to: rect)!
         
-        // Create a new image based on the imageRef and rotate back to the original orientation
         let image: UIImage = UIImage(cgImage: imageRef, scale: image.scale, orientation: image.imageOrientation)
         
         return image
     }
-    
 }

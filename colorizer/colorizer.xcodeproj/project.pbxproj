@@ -14,7 +14,6 @@
 		F00B2857247B965E00500EF2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F00B2856247B965E00500EF2 /* Assets.xcassets */; };
 		F00B285A247B965E00500EF2 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F00B2858247B965E00500EF2 /* LaunchScreen.storyboard */; };
 		F00B2862247BAAC600500EF2 /* promo.jpg in Resources */ = {isa = PBXBuildFile; fileRef = F00B2861247BAAC600500EF2 /* promo.jpg */; };
-		F00B286C247BC5CF00500EF2 /* colorizer.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = F00B286B247BC5CF00500EF2 /* colorizer.mlmodel */; };
 		F00B287F247BE74B00500EF2 /* Array+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00B2870247BE74B00500EF2 /* Array+Extensions.swift */; };
 		F00B2880247BE74B00500EF2 /* Math.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00B2871247BE74B00500EF2 /* Math.swift */; };
 		F00B2881247BE74B00500EF2 /* UIImage+CVPixelBuffer.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00B2872247BE74B00500EF2 /* UIImage+CVPixelBuffer.swift */; };
@@ -30,11 +29,9 @@
 		F00B288B247BE74B00500EF2 /* NonMaxSuppression.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00B287C247BE74B00500EF2 /* NonMaxSuppression.swift */; };
 		F00B288C247BE74B00500EF2 /* CGImage+RawBytes.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00B287D247BE74B00500EF2 /* CGImage+RawBytes.swift */; };
 		F00B288D247BE74B00500EF2 /* MLMultiArray+Image.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00B287E247BE74B00500EF2 /* MLMultiArray+Image.swift */; };
-		F00B288F247C09EC00500EF2 /* Colorizer2.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = F00B288E247C09EC00500EF2 /* Colorizer2.mlmodel */; };
 		F00B2891247C0AB800500EF2 /* Lambda.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00B2890247C0AB800500EF2 /* Lambda.swift */; };
 		F0465382247D2DC9002880CB /* SaveViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0465381247D2DC9002880CB /* SaveViewController.swift */; };
-		F0B8A7EC24800AE00058F801 /* Colorizer512.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = F0B8A7EB24800AE00058F801 /* Colorizer512.mlmodel */; };
-		F0FF70F4247E7071006752E3 /* Colorizer1024.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = F0FF70F3247E7071006752E3 /* Colorizer1024.mlmodel */; };
+		F0A9EBDA248DD91A0074D749 /* Colorizer2.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = F0A9EBD9248DD91A0074D749 /* Colorizer2.mlmodel */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -47,7 +44,6 @@
 		F00B2859247B965E00500EF2 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		F00B285B247B965E00500EF2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F00B2861247BAAC600500EF2 /* promo.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = promo.jpg; path = ../../design/promo.jpg; sourceTree = "<group>"; };
-		F00B286B247BC5CF00500EF2 /* colorizer.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = colorizer.mlmodel; sourceTree = "<group>"; };
 		F00B2870247BE74B00500EF2 /* Array+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Array+Extensions.swift"; sourceTree = "<group>"; };
 		F00B2871247BE74B00500EF2 /* Math.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Math.swift; sourceTree = "<group>"; };
 		F00B2872247BE74B00500EF2 /* UIImage+CVPixelBuffer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIImage+CVPixelBuffer.swift"; sourceTree = "<group>"; };
@@ -63,11 +59,9 @@
 		F00B287C247BE74B00500EF2 /* NonMaxSuppression.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NonMaxSuppression.swift; sourceTree = "<group>"; };
 		F00B287D247BE74B00500EF2 /* CGImage+RawBytes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CGImage+RawBytes.swift"; sourceTree = "<group>"; };
 		F00B287E247BE74B00500EF2 /* MLMultiArray+Image.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "MLMultiArray+Image.swift"; sourceTree = "<group>"; };
-		F00B288E247C09EC00500EF2 /* Colorizer2.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = Colorizer2.mlmodel; sourceTree = "<group>"; };
 		F00B2890247C0AB800500EF2 /* Lambda.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Lambda.swift; sourceTree = "<group>"; };
 		F0465381247D2DC9002880CB /* SaveViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaveViewController.swift; sourceTree = "<group>"; };
-		F0B8A7EB24800AE00058F801 /* Colorizer512.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = Colorizer512.mlmodel; sourceTree = "<group>"; };
-		F0FF70F3247E7071006752E3 /* Colorizer1024.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = Colorizer1024.mlmodel; sourceTree = "<group>"; };
+		F0A9EBD9248DD91A0074D749 /* Colorizer2.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; name = Colorizer2.mlmodel; path = ../../notebooks/Colorizer2.mlmodel; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -101,12 +95,9 @@
 			isa = PBXGroup;
 			children = (
 				F00B286F247BE74B00500EF2 /* CoreMLHelpers */,
-				F00B286B247BC5CF00500EF2 /* colorizer.mlmodel */,
-				F0FF70F3247E7071006752E3 /* Colorizer1024.mlmodel */,
-				F0B8A7EB24800AE00058F801 /* Colorizer512.mlmodel */,
-				F00B288E247C09EC00500EF2 /* Colorizer2.mlmodel */,
 				F00B2861247BAAC600500EF2 /* promo.jpg */,
 				F00B284D247B965A00500EF2 /* AppDelegate.swift */,
+				F0A9EBD9248DD91A0074D749 /* Colorizer2.mlmodel */,
 				F00B284F247B965A00500EF2 /* SceneDelegate.swift */,
 				F00B2851247B965A00500EF2 /* ViewController.swift */,
 				F0465381247D2DC9002880CB /* SaveViewController.swift */,
@@ -218,9 +209,7 @@
 				F00B287F247BE74B00500EF2 /* Array+Extensions.swift in Sources */,
 				F0465382247D2DC9002880CB /* SaveViewController.swift in Sources */,
 				F00B2852247B965A00500EF2 /* ViewController.swift in Sources */,
-				F0B8A7EC24800AE00058F801 /* Colorizer512.mlmodel in Sources */,
 				F00B2886247BE74B00500EF2 /* MLMultiArray+Helpers.swift in Sources */,
-				F0FF70F4247E7071006752E3 /* Colorizer1024.mlmodel in Sources */,
 				F00B2884247BE74B00500EF2 /* CGImagePropertyOrientation.swift in Sources */,
 				F00B2880247BE74B00500EF2 /* Math.swift in Sources */,
 				F00B2882247BE74B00500EF2 /* Predictions.swift in Sources */,
@@ -230,11 +219,10 @@
 				F00B2889247BE74B00500EF2 /* CoreML+Combine.swift in Sources */,
 				F00B284E247B965A00500EF2 /* AppDelegate.swift in Sources */,
 				F00B288A247BE74B00500EF2 /* CGImage+CVPixelBuffer.swift in Sources */,
-				F00B288F247C09EC00500EF2 /* Colorizer2.mlmodel in Sources */,
+				F0A9EBDA248DD91A0074D749 /* Colorizer2.mlmodel in Sources */,
 				F00B2888247BE74B00500EF2 /* MLModel+Images.swift in Sources */,
 				F00B2850247B965A00500EF2 /* SceneDelegate.swift in Sources */,
 				F00B2883247BE74B00500EF2 /* UIImage+Extensions.swift in Sources */,
-				F00B286C247BC5CF00500EF2 /* colorizer.mlmodel in Sources */,
 				F00B288B247BE74B00500EF2 /* NonMaxSuppression.swift in Sources */,
 				F00B2881247BE74B00500EF2 /* UIImage+CVPixelBuffer.swift in Sources */,
 			);
