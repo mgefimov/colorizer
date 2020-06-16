@@ -1,7 +1,7 @@
 # colorizer
 black &amp; white photo colorizer
 
-## screenshots
+## Screenshots
 <img src="https://raw.githubusercontent.com/Hapsidra/colorizer/master/screenshots/iphone%205.5/Simulator%20Screen%20Shot%20-%20iPhone%208%20Plus%20-%202020-06-13%20at%2014.43.12.png" width="300" />
 
 <img src="https://raw.githubusercontent.com/Hapsidra/colorizer/master/screenshots/iphone%205.5/Simulator%20Screen%20Shot%20-%20iPhone%208%20Plus%20-%202020-06-13%20at%2014.43.25.png" width="300" />
