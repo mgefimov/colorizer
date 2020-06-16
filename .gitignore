@@ -112,7 +112,6 @@ data
 *SymbolicLinks.sh
 *.ipynb_checkpoints*
 ColorizeTraining*[0-9]*.ipynb
-*Colorizer[0-9]*.ipynb
 lesson7-superres*.ipynb
 test.py
 result_images
