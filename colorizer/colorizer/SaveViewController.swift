@@ -11,15 +11,12 @@ import StoreKit
 
 class SaveViewController: UIViewController {
     var image: UIImage!
+    var originalImage: UIImage!
     @IBOutlet weak var imageView: UIImageView!
     @IBOutlet weak var saveButton: UIButton!
     override func viewDidLoad() {
         super.viewDidLoad()
-        if image.size.height > image.size.width {
-            self.imageView.contentMode = .scaleAspectFill
-        } else {
-            self.imageView.contentMode = .scaleAspectFit
-        }
+        self.imageView.contentMode = .scaleAspectFit
         self.imageView.image = image
         self.navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
         self.navigationController?.navigationBar.shadowImage = UIImage()
@@ -47,7 +44,7 @@ class SaveViewController: UIViewController {
             ac.addAction(UIAlertAction(title: "OK", style: .default))
             self.present(ac, animated: true)
         }
-        activityViewController.popoverPresentationController?.sourceView = self.view
+        activityViewController.popoverPresentationController?.sourceView = saveButton
         self.present(activityViewController, animated: true)
         //UIImageWriteToSavedPhotosAlbum(image, self, #selector(image(_:didFinishSavingWithError:contextInfo:)), nil)
     }
@@ -60,10 +57,10 @@ class SaveViewController: UIViewController {
     }
     
     @objc func imageTap() {
-        if imageView.contentMode == .scaleAspectFit {
-            imageView.contentMode = .scaleAspectFill
+        if self.imageView.image == image {
+            self.imageView.image = originalImage
         } else {
-            imageView.contentMode = .scaleAspectFit
+            self.imageView.image = image
         }
     }
 }
