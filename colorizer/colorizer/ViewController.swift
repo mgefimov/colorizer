@@ -15,9 +15,10 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     @IBOutlet weak var promoImage: UIImageView!
     @IBOutlet weak var startButton: UIButton!
     let picker = UIImagePickerController()
-    let model = try! VNCoreMLModel(for: Colorizer2().model)
-    var originalImage: UIImage? = nil
+    let model = try! VNCoreMLModel(for: Colorizer().model)
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
+    var n: Int = 0
+    var m: Int = 0
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -41,8 +42,8 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
             guard let image = info[.originalImage] as? UIImage else {
                 fatalError("Expected a dictionary containing an image, but was provided the following: \(info)")
             }
-            self.originalImage = image
-            self.process(image)
+            let img = image
+            self.process(img)
         }
     }
     
@@ -51,45 +52,79 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         startButton.setTitle("", for: .normal)
         startButton.isEnabled = false
         let request = VNCoreMLRequest(model: model) { (request, error) in
-            self.processResult(for: request, error: error)
+            self.processResult(for: request, error: error, originalImage: image)
         }
-        request.imageCropAndScaleOption = .scaleFit
-        
+        request.imageCropAndScaleOption = .scaleFill
+        n = Int(max(1, round(image.size.height / 512)))
+        m = Int(max(1, round(image.size.width / 512)))
+        m = min(m, 2)
+        n = min(n, 2)
+        let resizedImage = image.resized(newSize: CGSize(width: 512 * m, height: 512 * n))
         DispatchQueue.global(qos: .userInitiated).async {
-            let handler = VNImageRequestHandler(cgImage: image.cgImage!)
-            do {
-                try handler.perform([request])
-            } catch {
-                print("Failed to perform classification.\n\(error.localizedDescription)")
+            let cgImage = resizedImage.cgImage!
+            //CGImagePropertyOrientation(
+            //let orientation = CGImagePropertyOrientation(image.imageOrientation)
+            var imagesMatrix: [[CGImage]] = []
+            for i in 0..<self.n {
+                var images: [CGImage] = []
+                for j in 0..<self.m {
+                    let cropped = cgImage.cropping(to: CGRect(x: j * 512, y: i * 512, width: 512, height: 512))!
+                    images.append(cropped)
+                }
+                imagesMatrix.append(images)
+            }
+            
+            let orientation = CGImagePropertyOrientation(image.imageOrientation)
+            for images in imagesMatrix {
+                for img in images {
+                    let handler = VNImageRequestHandler(cgImage: img, orientation: orientation)
+                    do {
+                        try handler.perform([request])
+                    } catch {
+                        print("Failed to perform classification.\n\(error.localizedDescription)")
+                    }
+                }
             }
         }
     }
     
-    func processResult(for request: VNRequest, error: Error?) {
+    var images: [UIImage] = []
+    
+    func processResult(for request: VNRequest, error: Error?, originalImage: UIImage) {
+        print(#function)
         DispatchQueue.main.async {
             
             guard let results = request.results as? [VNPixelBufferObservation] else {
                 print("error", error ?? "")
                 return
             }
-            print(results[0].pixelBuffer)
             let ciImage = CIImage(cvPixelBuffer: results[0].pixelBuffer)
             let cgImage = self.convertCIImageToCGImage(inputImage: ciImage)!
-            var uiImage = UIImage(cgImage: cgImage)
-            let scale = uiImage.size.height / max(self.originalImage!.size.height,self.originalImage!.size.width)
-            uiImage = self.cropToBounds(image: uiImage, width: self.originalImage!.size.width * scale, height: self.originalImage!.size.height * scale)
-            let storyBoard = UIStoryboard(name: "Main", bundle: nil)
-            let newViewController = storyBoard.instantiateViewController(withIdentifier: "SaveViewController") as! SaveViewController
-            newViewController.image = uiImage
-            
-            self.show(newViewController, sender: self)
-            
-            self.activityIndicator.stopAnimating()
-            self.startButton.setTitle("Let's start", for: .normal)
-            self.startButton.isEnabled = true
+            let uiImage = UIImage(cgImage: cgImage)
+            self.images.append(uiImage)
+            if self.images.count == self.n * self.m {
+                var result = self.merge()
+                result = result.resized(newSize: originalImage.size)
+                self.move(image: result, originalImage: originalImage)
+                self.images = []
+            }
         }
     }
     
+    func move(image: UIImage, originalImage: UIImage) {
+        let storyBoard = UIStoryboard(name: "Main", bundle: nil)
+        let newViewController = storyBoard.instantiateViewController(withIdentifier: "SaveViewController") as! SaveViewController
+        newViewController.image = image
+        newViewController.originalImage = originalImage
+        self.show(newViewController, sender: self)
+        
+        self.activityIndicator.stopAnimating()
+        self.startButton.setTitle("Let's start", for: .normal)
+        self.startButton.isEnabled = true
+    }
+}
+
+extension ViewController {
     func convertCIImageToCGImage(inputImage: CIImage) -> CGImage? {
         let context = CIContext(options: nil)
         if let cgImage = context.createCGImage(inputImage, from: inputImage.extent) {
@@ -98,20 +133,34 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         return nil
     }
     
-    func cropToBounds(image: UIImage, width: CGFloat, height: CGFloat) -> UIImage {
+    func merge() -> UIImage {
+        // This is the rect that we've calculated out and this is what is actually used below
         
-        let cgimage = image.cgImage!
-        let contextImage: UIImage = UIImage(cgImage: cgimage)
-        let contextSize: CGSize = contextImage.size
-        let posX = (contextSize.width - width) / 2
-        let posY = (contextSize.height - height) / 2
-        
-        let rect: CGRect = CGRect(x: posX, y: posY, width: width, height: height)
-        
-        let imageRef: CGImage = cgimage.cropping(to: rect)!
-        
-        let image: UIImage = UIImage(cgImage: imageRef, scale: image.scale, orientation: image.imageOrientation)
-        
-        return image
+
+        // Actually do the resizing to the rect using the ImageContext stuff
+        UIGraphicsBeginImageContextWithOptions(CGSize(width: 512 * m, height: 512 * n), false, 1.0)
+        for (i, image) in images.enumerated() {
+            let rect = CGRect(x: i % m * 512, y: i / m * 512, width: 512, height: 512)
+            image.draw(in: rect)
+        }
+        let newImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        return newImage!
     }
 }
+
+extension UIImage {
+    func resized(newSize: CGSize) -> UIImage {
+        // This is the rect that we've calculated out and this is what is actually used below
+        let rect = CGRect(x: 0, y: 0, width: newSize.width, height: newSize.height)
+
+        // Actually do the resizing to the rect using the ImageContext stuff
+        UIGraphicsBeginImageContextWithOptions(newSize, false, 1.0)
+        self.draw(in: rect)
+        let newImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        return newImage!
+    }
+}
+
+
